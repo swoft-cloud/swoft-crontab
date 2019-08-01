@@ -70,12 +70,12 @@ class CrontabRegister
     public static function getCronTasks(int $timeStamp = null): array
     {
         $start_time = empty($timeStamp) ? time() : $timeStamp;
-        $date[] = date('s', $start_time);
-        $date[] = date('i', $start_time);
-        $date[] = date('H', $start_time);
-        $date[] = date('d', $start_time);
-        $date[] = date('m', $start_time);
-        $date[] = date('w', $start_time);
+        $date[] = (int)date('s', $start_time);
+        $date[] = (int)date('i', $start_time);
+        $date[] = (int)date('H', $start_time);
+        $date[] = (int)date('d', $start_time);
+        $date[] = (int)date('m', $start_time);
+        $date[] = (int)date('w', $start_time);
         $task_arr = array();
         foreach (self::$crontabObj as $item) {
             list('class' => $className, 'method' => $methodName, 'cron' => $cron) = $item;

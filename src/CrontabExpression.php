@@ -90,7 +90,7 @@ class CrontabExpression
         if (strpos($value, '/') !== false) {
             str_replace('*', '0', '$value');
             list($start, $end) = explode('/', $value);
-            if (!filter_var($start, FILTER_VALIDATE_INT) || !filter_var($end, FILTER_VALIDATE_INT)) {
+            if (!ctype_digit($start) || !ctype_digit($end)) {
                 return false;
             }
             if ($start < $rangeStart || $end > $rangeEnd || $end < $start) {
@@ -99,7 +99,7 @@ class CrontabExpression
         }
         if (strpos($value, '-') !== false) {
             list($start, $end) = explode('-', $value);
-            if (!filter_var($start, FILTER_VALIDATE_INT) || !filter_var($end, FILTER_VALIDATE_INT)) {
+            if (!ctype_digit($start) || !ctype_digit($end)) {
                 return false;
             }
             if ($start < $rangeStart || $end > $rangeEnd || $end < $start) {
@@ -109,7 +109,7 @@ class CrontabExpression
         if (strpos($value, ',') !== false) {
             $items = explode(',', $value);
             foreach ($items as $item) {
-                if (!filter_var($item, FILTER_VALIDATE_INT)) {
+                if (!ctype_digit($item)) {
                     return false;
                 }
                 if ($item < $rangeStart || $item > $rangeEnd) {
@@ -117,7 +117,7 @@ class CrontabExpression
                 }
             }
         }
-        if (!filter_var($value, FILTER_VALIDATE_INT) && $value < $rangeStart || $value > $rangeEnd) {
+        if (!ctype_digit($value) && $value < $rangeStart || $value > $rangeEnd) {
             return false;
         }
         return true;
@@ -146,12 +146,12 @@ class CrontabExpression
             }
             if (strpos($item, '-') !== false) {
                 list($start, $end) = explode('-', $item);
-                $return_arr[$k][] = range($start, $end);
+                $return_arr[$k] = range($start, $end);
             }
             if (strpos($item, ',') !== false) {
-                $return_arr[$k][] = explode(',', $item);
+                $return_arr[$k] = explode(',', $item);
             }
-            if (filter_var($item, FILTER_VALIDATE_INT)) {
+            if (ctype_digit($item)) {
                 $return_arr[$k][] = $item;
             }
         }
