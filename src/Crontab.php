@@ -5,6 +5,7 @@ namespace Swoft\Crontab;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Process\Process;
 use Swoft\Process\UserProcess;
+use Swoft\Timer;
 use Swoole\Coroutine;
 
 /**
@@ -21,16 +22,20 @@ class Crontab extends UserProcess
      */
     public function run(Process $process): void
     {
-        while (true) {
+        $channel = new Channel(1);
+        Timer::tick(1000, function () use ($channel) {
             $time = time();
             $task = CrontabRegister::getCronTasks($time);
             foreach ($task as $item) {
-                sgo(function () use ($item) {
-                    $obj = new $item[0]();
-                    call_user_func(array($obj, $item[1]));
-                });
+                $channel->push($item);
             }
-            Coroutine::sleep(1);
+        });
+        while (true) {
+            $item = $channel->pop();
+            sgo(function () use ($item) {
+                $obj = new $item[0]();
+                call_user_func(array($obj, $item[1]));
+            });
         }
     }
 }
