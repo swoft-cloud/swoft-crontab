@@ -25,7 +25,7 @@ class CrontabExpression
             return false;
         }
         foreach ($cronParts as $key => $cronPart) {
-            $pattern = '/^\d$|^\*$|^\?$|^\d\-\d$|^[\d\*]\/\d$|^\d[\,\d\,]*\d$/i';
+            $pattern = '/^\d$|^\*$|^\?$|^\d+\-\d+$|^[\d\*]+\/\d+$|^\d[\,\d\,]*\d$/i';
             if (!preg_match($pattern, $cronPart) || !self::checkItem($key, $cronPart)) {
                 return false;
             }
