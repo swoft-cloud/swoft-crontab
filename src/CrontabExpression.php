@@ -93,7 +93,7 @@ class CrontabExpression
             if (!ctype_digit($start) || !ctype_digit($end)) {
                 return false;
             }
-            if ($start < $rangeStart || $end > $rangeEnd || $end < $start) {
+            if ($start < $rangeStart || $end > $rangeEnd) {
                 return false;
             }
         }
