@@ -11,10 +11,14 @@ class CrontabRegister
      * @var array
      * @example
      * [
-     *     'className:methodName:* * * * * *'
+     *      [
+     *          'class'=>xxx,
+     *          'method'=>xxx,
+     *          'cron'=>'* * * * * *'
+     *      ]
      * ]
      */
-    private static $revMapping = [];
+    private static $crontabObj = [];
 
     /**
      * @var array
@@ -55,15 +59,7 @@ class CrontabRegister
                 sprintf('`%s::%s()` `@Cron()` expression format is error', $className, $methodName)
             );
         }
-        self::$revMapping[] = "{$className}:{$methodName}:{$cronExpression}";
-    }
-
-    /**
-     * @return array
-     */
-    public static function getRevMapping(): array
-    {
-        return self::$revMapping;
+        self::$crontabObj[] = ['class' => $className, 'method' => $methodName, 'cron' => $cronExpression];
     }
 
     /**
@@ -81,8 +77,8 @@ class CrontabRegister
         $date[] = date('m', $start_time);
         $date[] = date('w', $start_time);
         $task_arr = array();
-        foreach (self::$revMapping as $item) {
-            list($className, $methodName, $cron) = explode(':', $item);
+        foreach (self::$crontabObj as $item) {
+            list('class' => $className, 'method' => $methodName, 'cron' => $cron) = $item;
             array_push($task_arr, [$className, $methodName, self::$scheduledClasses[$className]]);
             $cron_arr_date = CrontabExpression::parseCronItem($cron);
             foreach ($cron_arr_date as $k => $cron_item) {
@@ -95,6 +91,7 @@ class CrontabRegister
                 }
             }
         }
+
         return $task_arr;
     }
 }
